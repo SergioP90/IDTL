@@ -209,3 +209,8 @@ __marimo__/
 
 # Tables folder
 tables/
+
+# Files
+*.xlsx
+example.txt
+settings.json
