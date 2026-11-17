@@ -11,6 +11,10 @@ from src.table_cache import TableCache
 from src.table_handler import find_values
 from src.file_handler import id_extract, write_excel
 
+import xlsxwriter  # noqa: F401  — required by pd.ExcelWriter(engine='xlsxwriter')
+import openpyxl  # noqa: F401  — default engine for pd.ExcelWriter, required for reading .xlsx files
+
+
 SETTINGS_FILE = "settings.json"
 
 DEFAULT_JSON = {
