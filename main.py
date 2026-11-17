@@ -475,7 +475,7 @@ def setup_context():
 
 def readable_error(msg):
     msg_lower = str(msg).lower()
-
+    
     if "parsing error" in msg_lower or "invalid literal" in msg_lower:
         return "The ID format is incorrect. Please use TYPE-EFFORT-HEIGHT-ASSEMBLY (e.g., CO-15000-33-N3565)."
     elif "lookup error" in msg_lower:

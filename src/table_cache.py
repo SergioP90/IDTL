@@ -32,5 +32,5 @@ class TableCache:
                 df.index = df.index.astype(int)
                 df.columns = df.columns.astype(int)
                 tables.append(df)
-
+        self.cache[type_name] = tables
         return tables

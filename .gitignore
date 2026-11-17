@@ -208,10 +208,11 @@ __marimo__/
 
 
 # Tables folder
-tables/
+tables*/
 
 # Files
 *.xlsx
 example.txt
 settings.json
 *.ico
+*.txt
