@@ -4,7 +4,10 @@ from cachetools import LRUCache
 
 
 class TableCache:
-    def __init__(self, table_dir="tables", max_types_mem=5, table_names=["excavation.xlsx", "shaft.xlsx", "head.xlsx", "cross.xlsx", "dome.xlsx"]):
+    def __init__(self, table_dir="tables", max_types_mem=5, table_names=None):
+        if table_names is None:
+            table_names = ["excavation.xlsx", "shaft.xlsx", "head.xlsx", "cross.xlsx", "dome.xlsx"]
+            
         self.table_dir = table_dir
         self.cache = LRUCache(maxsize=max_types_mem)
         self.table_names = table_names
