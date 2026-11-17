@@ -7,7 +7,9 @@ def id_extract(file_path="input.txt"):
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             for line in f:
-                ids.append(line.strip())
+                stripped = line.strip()
+                if stripped:
+                    ids.append(stripped)
         return ids
     return None
 

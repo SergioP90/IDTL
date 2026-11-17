@@ -10,11 +10,17 @@ def safe_lookup(df, row_value, col_value):
     """
     try:
         return df.at[row_value, col_value]
-    except KeyError:
+    except (KeyError, ValueError):
         try:
             return df.T.at[row_value, col_value]
-        except KeyError:
-            raise KeyError(f"Value not found in table: row={row_value}, col={col_value}")
+        except (KeyError, ValueError):
+            rows = sorted(df.index.tolist())
+            cols = sorted(df.columns.tolist())
+            raise KeyError(
+                f"Value not found in table: row={row_value}, col={col_value}. "
+                f"Available rows: {rows[:10]}{'…' if len(rows) > 10 else ''}; "
+                f"available columns: {cols[:10]}{'…' if len(cols) > 10 else ''}"
+            )
 
 
 def find_values(ID, table_cache):

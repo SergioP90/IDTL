@@ -31,8 +31,13 @@ class TableCache:
             type_path = os.path.join(self.table_dir, type_name)
             for filename in self.table_names:
                 file_path = os.path.join(type_path, filename)
-                df = pd.read_excel(file_path, index_col=0, header=0)
-                df.index = df.index.astype(int)
+                try:
+                    df = pd.read_excel(file_path, index_col=0, header=0)
+                except FileNotFoundError:
+                    raise FileNotFoundError(f"{file_path} not found (type '{type_name}')")
+                except Exception as exc:
+                    raise ValueError(f"{file_path}: could not be read as an Excel table ({exc})") from exc
+                df.index = df.index.astype(int)      # unchanged — integer labels are the spec
                 df.columns = df.columns.astype(int)
                 tables.append(df)
         self.cache[type_name] = tables

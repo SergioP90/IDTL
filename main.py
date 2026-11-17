@@ -255,7 +255,7 @@ In this help menu, the available commands are listed with their aliases in paren
             print(f"{Fore.GREEN}Settings in memory:{Style.RESET_ALL}")
             print(f"{Fore.GREEN}- Tables Folder: {CONTEXT.get("tables_folder", f"{Fore.GREEN}unknown{Style.RESET_ALL}")}{Style.RESET_ALL}\n")
             table_names = CONTEXT.get("table_names", [])
-            if len(table_names) > 5:
+            if not table_names or len(table_names) != 5:
                 print(f"{Fore.RED}Error reading table names.{Style.RESET_ALL}")
             else:
                 print(f"{Fore.GREEN}- Tables Names:{Style.RESET_ALL}")
@@ -267,7 +267,7 @@ In this help menu, the available commands are listed with their aliases in paren
                 print()
 
             column_names = CONTEXT.get("column_names", [])
-            if len(column_names) > 7:
+            if not column_names or len(column_names) != 7:
                 print(f"{Fore.RED}Error reading column names.{Style.RESET_ALL}")
             else:
                 print(f"{Fore.GREEN}- Columns Names:{Style.RESET_ALL}")
@@ -411,9 +411,9 @@ In this help menu, the available commands are listed with their aliases in paren
         try:
             write_excel(df, output_file)
         except FileNotFoundError as e:
-            print(f"{Fore.RED}Error, cannot create or modify the file \"{output_file}\". Make sure it's not in use by another program and that the folder has writte permisions.{Style.RESET_ALL}")
+            print(f"{Fore.RED}Error, cannot create or modify the file \"{output_file}\". Make sure it's not in use by another program and that the folder has write permissions.{Style.RESET_ALL}")
         except PermissionError as e:
-            print(f"{Fore.RED}Error, program lacks the neccesary permisions to writte to \"{output_file}\".{Style.RESET_ALL}")
+            print(f"{Fore.RED}Error, program lacks the necessary permissions to write to \"{output_file}\".{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.RED}An error occurred: {e}")
         print()
@@ -475,15 +475,19 @@ def setup_context():
 
 def readable_error(msg):
     msg_lower = str(msg).lower()
+    new_msg = "An unexpected error occurred. Please check the ID, folder structure and the tables."
     
     if "parsing error" in msg_lower or "invalid literal" in msg_lower:
-        return "The ID format is incorrect. Please use TYPE-EFFORT-HEIGHT-ASSEMBLY (e.g., CO-15000-33-N3565)."
-    elif "lookup error" in msg_lower:
-        return "A value could not be found in one of the tables. The table may be missing the expected values."
-    elif "table missing" in msg_lower:
-        return "The required tables for this type are missing. Please check that the folder and Excel files exist."
-    else:
-        return "An unexpected error occurred. Please check the ID, folder structure and the tables."
+        new_msg = "The ID format is incorrect. Please use TYPE-EFFORT-HEIGHT-XDEFG (e.g., CO-15000-33-N3565)."
+    if "not found (type" in msg_lower or "no such file" in msg_lower:
+        new_msg = "A required table is missing. Check that tables/<TYPE>/ contains all five .xlsx files named as in settings.json."
+    if "could not be read as an excel table" in msg_lower:
+        new_msg = "A table file could not be read. Make sure it is a valid .xlsx and isn't corrupted or open in another program."
+    if "lookup error" in msg_lower or "not found in table" in msg_lower:
+        new_msg = "A value could not be found in one of the tables. The ID may reference a value this type doesn't define, or the table may use a different label convention (meters vs ID numbers)."
+    if "table missing" in msg_lower:
+        new_msg = "The required tables for this type are missing. Please check that the folder and Excel files exist."
+    return new_msg + "\n\tDetails: " + str(msg)
 
 
 def batch_finder(ids, table_cache, column_names=["Type", "Excavation", "Shaft", "Head", "Cross_a", "Cross_c", "Dome"]):
