@@ -21,7 +21,7 @@ def find_values(ID, table_cache):
     """
     Find all the required values for a given ID in the format \"A-B-C-XDEFG where:
         - A represents the type
-        - B repreesents the effort
+        - B represents the effort
         - C represents the height
         - D represents the head type
         - E represents the cross type a
